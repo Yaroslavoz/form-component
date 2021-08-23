@@ -8,11 +8,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export const PrimaryButton = ({ children, props }) => {
+export const PrimaryButton = ({ children, props, onClick }) => {
   const styles = useStyles()
   return (
     < Button 
       className={styles.root}
+      onClick={onClick}
       type = "submit"
       fullWidth 
       variant = "contained"

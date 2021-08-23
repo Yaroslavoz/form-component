@@ -4,12 +4,29 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { DataProvider } from './DataContext';
+import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import purple from '@material-ui/core/colors/purple';
+import green from '@material-ui/core/colors/green';
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: purple[500],
+    },
+    secondary: {
+      main: green[500],
+    },
+  },
+});
 ReactDOM.render(
   // <React.StrictMode>
+  <MuiThemeProvider theme={theme}>
     <DataProvider>
-      <App />
+      
+        <App />
+      
     </DataProvider>
+  </MuiThemeProvider> 
   // </React.StrictMode>,
   ,document.getElementById('root')
 );

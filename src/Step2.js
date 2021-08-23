@@ -1,5 +1,5 @@
 import Typography from "@material-ui/core/Typography";
-import React, { useState } from "react";
+import React from "react";
 import { MainContainer } from "./components/MainContainer";
 import { Form } from "./components/Form";
 import { Input } from "./components/Input";
@@ -9,10 +9,7 @@ import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useHistory } from "react-router-dom";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import   Checkbox   from "@material-ui/core/Checkbox";
-
-
-
+import { useData } from "./DataContext";
 
 
 const schema = yup.object().shape({
@@ -21,40 +18,47 @@ const schema = yup.object().shape({
 
 });
 
-// const normalizePhoneNumber = (value) => {
-//   const phoneNumber = parsePhoneNumberFromString(value)
-//   if(!phoneNumber){
-//     return value
-//   }
-//   return phoneNumber.formatInternational()
+// const outerWatch = ({ control }) => {
+//   const hasPhone = useWatch({
+//     control,
+//     name: 'hasPhone',
+//     defaultValue: 'default' // default value before the render
+//   })
 // }
 
 export const Step2 = () => {
-  // const { value, onChange} = props;
-  const [value, setValue] = useState()
   const history = useHistory()
-  const {register, handleSubmit, formState: { errors }, watch, control } = useForm({
+  const { data, setValues } = useData()
+  const {register,  watch, handleSubmit, formState: { errors }} = useForm({
+    defaultValues: { email: data.email, hasPhone: data.hasPhone, phoneNumber: data.phoneNumber},
     mode: "onBlur",
     resolver: yupResolver(schema),
   })
-  const [hasPhone, setPhone] = useState(false) 
-  // watch("hasPhone", false)
+//  const hasPhone = () => {
+//   useWatch({
+//     name: "hasPhone",
+//     control
+//   })
+//  } ;
+ const hasPhone = watch("hasPhone");
 
 
   const onSubmit = (data) => {
-    history.push("/step3")
+    setValues(data)
     console.log(data);
+    history.push("/step3");
+    
   }
 
-  const handleChange = (e) => {
-    setPhone(!hasPhone)
-  }
-  const handlePhone = (e) => {
-    let str = e.target.value;
-    let splitted = str.split('')
-    setValue(Number(str))
-    // setValue(str.length===10 ? `(${splitted[0]}${splitted[1]}${splitted[2]})-${splitted[3]}${splitted[4]}${splitted[5]}-${splitted[6]}${splitted[7]}-${splitted[8]}${splitted[9]}` : str)
-  }
+  // const handleChange = (e) => {
+  //   setPhone(!hasPhone);
+  //   localStorage.setItem('hasPhone', !hasPhone)
+  // }
+  // const handlePhone = (e) => {
+  //   let str = e.target.value;
+  //   // str.length===10 ? str.replace(/\D+/g, '').replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '($1) $2-$3-$4') : str
+    
+  // }
   return <MainContainer>
     <Typography component="h2" variant="h5">
     ✨ Step 2
@@ -71,7 +75,14 @@ export const Step2 = () => {
       />
       <FormControlLabel 
         control={
-          <Checkbox name="hasPhone" {...register("hasPhone")} color="primary" onChange={handleChange}/>
+          <input type="checkbox" 
+            defaultValue={data.hasPhone} 
+            defaultChecked={data.hasPhone} 
+            name="hasPhone" 
+            {...register("hasPhone")} 
+            color="primary" 
+            // onChange={handleChange}
+            />
         }
         label="Do you have a phone"
       />
@@ -82,7 +93,6 @@ export const Step2 = () => {
         type="tel"
         label="Phone Number"
         name="phoneNumber"
-        // value={value}
         error={!!errors.phoneNumber}
         helperText={errors?.phoneNumber?.message}
         // onChange={handlePhone}

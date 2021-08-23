@@ -3,6 +3,7 @@ import React from "react";
 import { MainContainer } from "./components/MainContainer";
 import { Form } from "./components/Form";
 import { Input } from "./components/Input";
+import { useData } from "./DataContext";
 import { useForm } from "react-hook-form";
 import { PrimaryButton } from "./components/PrimaryButton";
 import * as yup from 'yup';
@@ -22,14 +23,17 @@ const schema = yup.object().shape({
 
 export const Step1 = () => {
   const history = useHistory()
+  const { data, setValues } = useData()
   const {register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: { firstName: data.firstName, lastName: data.lastName },
     mode: "onBlur",
     resolver: yupResolver(schema),
   })
 
   const onSubmit = (data) => {
-    history.push("/step2")
+    setValues(data);
     console.log(data);
+    history.push("/step2")
   }
 
   return <MainContainer>
